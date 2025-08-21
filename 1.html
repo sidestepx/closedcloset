@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Size Guide Editor</title>
+<style>
+  body {
+    font-family: monospace;
+    background: #fff;
+    color: #222;
+    padding: 40px;
+    max-width: 900px;
+    margin: auto;
+  }
+  h1 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+  .product {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+  }
+  .product img {
+    width: 120px;
+    height: 160px;
+    object-fit: cover;
+    background: #ddd;
+    cursor: pointer;
+  }
+  .product-info {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .product-info input {
+    border: none;
+    background: transparent;
+    font-family: monospace;
+    font-size: 13px;
+    min-width: 50px;
+  }
+  table {
+    width: 100%;
+    border-spacing: 0;
+    font-size: 12px;
+    margin-top: 20px;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 4px;
+  }
+  th input, td input {
+    width: 90%;
+    border: none;
+    background: transparent;
+    border-bottom: 1px dotted #999;
+    font-family: monospace;
+    font-size: 12px;
+  }
+  .actions {
+    margin-top: 20px;
+  }
+  .actions button {
+    background: #fff;
+    border: 1px solid #000;
+    padding: 6px 12px;
+    font-family: monospace;
+    font-size: 12px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>body measurements by closed closet</h1>
+
+<div class="product">
+  <label for="upload">
+    <img id="productImg" src="" alt="Preview" />
+  </label>
+  <input type="file" id="upload" style="display:none;" />
+  <div class="product-info">
+    <div>Item name: <input type="text" id="itemName" value="Sweater" /></div>
+    <div>Available sizes: <input type="text" value="XS-3XL" /></div>
+    <div>Price: <input type="text" value="$120" /></div>
+    <div>Contact: <input type="text" value="telegram @hc_adm" /></div>
+  </div>
+</div>
+
+<table id="sizeTable">
+  <thead>
+    <tr>
+      <th><input type="text" value="SIZE" /></th>
+      <th><input type="text" value="NECK" /></th>
+      <th><input type="text" value="CHEST" /></th>
+      <th><input type="text" value="WAIST" /></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><input type="text" value="XS" /></td>
+      <td><input type="text" value="36cm" /></td>
+      <td><input type="text" value="80-85cm" /></td>
+      <td><input type="text" value="65-76cm" /></td>
+    </tr>
+    <tr>
+      <td><input type="text" value="S" /></td>
+      <td><input type="text" value="37-38cm" /></td>
+      <td><input type="text" value="86-91cm" /></td>
+      <td><input type="text" value="71-82cm" /></td>
+    </tr>
+    <tr>
+      <td><input type="text" value="M" /></td>
+      <td><input type="text" value="39cm" /></td>
+      <td><input type="text" value="92-97cm" /></td>
+      <td><input type="text" value="77-88cm" /></td>
+    </tr>
+    <tr>
+      <td><input type="text" value="L" /></td>
+      <td><input type="text" value="40-41cm" /></td>
+      <td><input type="text" value="98-103cm" /></td>
+      <td><input type="text" value="81-94cm" /></td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:11px; color:#666; margin-top:40px;">
+    The sizes in this chart are based on body measurements. If you need any support, please contact: telegram @hc_adm.
+</p>
+
+<div class="actions">
+  <button onclick="addRow()">Add Row</button>
+  <button onclick="removeLastRow()">Remove Last Row</button>
+  <button onclick="addColumn()">Add Column</button>
+  <button onclick="removeLastColumn()">Remove Last Column</button>
+</div>
+
+<script>
+  // Автозагрузка изображения
+  document.getElementById('upload').addEventListener('change', function(){
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+      document.getElementById('productImg').src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+  });
+
+  // Функции добавления / удаления строк и колонок
+  function addRow() {
+    const table = document.getElementById('sizeTable').getElementsByTagName('tbody')[0];
+    const newRow = document.createElement('tr');
+    const colCount = document.getElementById('sizeTable').rows[0].cells.length;
+    for(let i=0; i<colCount; i++){
+      const cell = document.createElement('td');
+      cell.innerHTML = '<input type="text" />';
+      newRow.appendChild(cell);
+    }
+    table.appendChild(newRow);
+  }
+
+  function removeLastRow() {
+    const tbody = document.getElementById('sizeTable').getElementsByTagName('tbody')[0];
+    if (tbody.rows.length > 0) {
+      tbody.deleteRow(tbody.rows.length - 1);
+    }
+  }
+
+  function addColumn() {
+    const headerRow = document.getElementById('sizeTable').rows[0];
+    const th = document.createElement('th');
+    th.innerHTML = '<input type="text" value="NEW" />';
+    headerRow.appendChild(th);
+
+    const tbody = document.getElementById('sizeTable').getElementsByTagName('tbody')[0];
+    for(let row of tbody.rows){
+      const cell = document.createElement('td');
+      cell.innerHTML = '<input type="text" />';
+      row.appendChild(cell);
+    }
+  }
+
+  function removeLastColumn() {
+    const table = document.getElementById('sizeTable');
+    const headerRow = table.rows[0];
+    if (headerRow.cells.length <= 1) return;
+
+    headerRow.deleteCell(headerRow.cells.length - 1);
+
+    const tbody = table.getElementsByTagName('tbody')[0];
+    for (let row of tbody.rows) {
+      row.deleteCell(row.cells.length - 1);
+    }
+  }
+
+  // Авторасширение поля Item name
+  function autoResizeInput(input) {
+    input.style.width = ((input.value.length + 1) * 8) + 'px';
+  }
+
+  const itemNameInput = document.getElementById('itemName');
+  autoResizeInput(itemNameInput);
+
+  itemNameInput.addEventListener('input', function() {
+    autoResizeInput(this);
+  });
+</script>
+
+</body>
+</html>
